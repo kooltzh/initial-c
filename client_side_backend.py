@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -86,13 +86,13 @@ def sending_msg():
     values = request.get_json()
 
     # Check that the required fields are in the POST'ed data
-    required = ['recipient', 'msg', 'time']
+    required = ['target', 'sender', 'msg', 'time']
 
     if not all(k in values for k in required):
         return 'Missing values', 400
 
     new_entry = {
-        'target': values['recipient'],
+        'target': values['target'],
         'sender': 'Me',
         'msg': values['msg'],
         'time': values['time'],
@@ -151,6 +151,7 @@ def signup():
             return '<h1>New user has been created!</h1>'
         return '<h1>Invalid username or password</h1>'
     return render_template('signup.html')
+
 
 @app.route('/logout')
 @login_required
