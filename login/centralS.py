@@ -59,9 +59,8 @@ def verf_login():
             user.status = True
             user.ipAddress = data['ipAddress']
             db.session.commit()
-            return True
-
-    return False
+            return 'True'
+    return 'False'
 
 
 @app.route('/signup', methods=['POST'])

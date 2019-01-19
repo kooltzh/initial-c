@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from multiprocessing import Queue
 import requests
 import json
-from login.genkey import *
+from genkey import *
 
 from difflib import SequenceMatcher
 
@@ -31,10 +31,12 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+from flask_cors import CORS
+CORS(app)
 
 def sendJSON(ipAddress, path, JSON):
     r = False
-    URL = 'http://' + ipAddress + path
+    URL = 'http://' + ipAddress + '/' + path
     try:
         r = requests.post(url=URL, data=JSON)
     except Exception as e:
@@ -45,7 +47,7 @@ def sendJSON(ipAddress, path, JSON):
     
 
 # define class for user database
-class chatdata(db.Model):
+class chatdata(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     target = db.Column(db.String(15))
     sender = db.Column(db.String(15))
@@ -100,7 +102,7 @@ def sending_msg():
 
     db.session.add(new_entry)
     db.session.commit()
-
+    
     # TODO adding sending message to /send_msg
     URL = 'http://localhost:5010/send_msg'
 
@@ -116,11 +118,11 @@ def inter_msg():
     msg = decrypt_msg(request.form['msg'], prikey)
     print(msg)
     qMsg.put(msg)
-    return render_template('index.html')
+    return render_template('login.html')
 
 
 @app.route('/get_msg')
-@login_required
+# @login_required
 def get_msg():
     def gen():
         while True:
@@ -132,13 +134,14 @@ def get_msg():
 def login():
     global prikey, name
     if request.method == 'POST':
-        data = request.form
+        data = request.form.to_dict()
         data['password'] = generate_password_hash(data['password'], method='sha256')
         data['ipAddress'] = request.remote_addr
+        print(sendJSON(Sen_ipAddress, 'login', data))
 
-        if sendJSON(Sen_ipAddress, 'login', data):
-            login_user(data, remember=data['remember'])
-            return redirect(url_for('index'))
+        if True:
+            # login_user(data, remember=data['remember'])
+            return render_template('index.html')
 
         return '<h1>Invalid username or password</h1>'
 
@@ -163,7 +166,7 @@ def signup():
 
 
 @app.route('/logout')
-@login_required
+# @login_required
 def logout():
     if sendJSON(Sen_ipAddress, 'login', name):
         logout_user()
