@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from multiprocessing import Queue
 import requests
-import JSON
+import json
 from login.genkey import *
 
 from difflib import SequenceMatcher
@@ -103,9 +103,6 @@ def sending_msg():
 
     # TODO adding sending message to /send_msg
     URL = 'http://localhost:5010/send_msg'
-    data = {
-        '':
-    }
 
     # TODO adding checking similarity
     data = {
