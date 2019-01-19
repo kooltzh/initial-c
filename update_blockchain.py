@@ -1,6 +1,8 @@
 import requests
 
-URL = 'http://localhost:5000/msg/new'
+ipAddress = '25.57.238.186'
+
+URL = 'http://' + ipAddress + ':5000/msg/new'
 
 JSON = {
     'sender': 'a',
@@ -56,7 +58,7 @@ print(r.content)
 
 # next
 
-URL = 'http://localhost:5000/mine'
+URL = 'http://' + ipAddress + ':5000/mine'
 try:
     r = requests.get(url=URL)
 except:
@@ -67,7 +69,7 @@ print(r.content)
 
 # next
 
-URL = 'http://localhost:5000/msg/trace'
+URL = 'http://' + ipAddress + ':5000/msg/trace'
 
 JSON = {
     'sender': 'b',
