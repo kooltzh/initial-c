@@ -1,11 +1,7 @@
 import os
 from flask import Flask, render_template, redirect, url_for, request, Response
 from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm 
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy  import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 import requests
@@ -24,6 +20,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+
 def sendJSON(ipAddress, JSON):
     URL = 'http://' + ipAddress + ':5000/inter_msg'
     try:
@@ -31,6 +28,7 @@ def sendJSON(ipAddress, JSON):
     except Exception as e:
         print(e)
         print("failed to connect to {}".format(URL))
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,14 +39,22 @@ class User(UserMixin, db.Model):
     ipAddress = db.Column(db.String(15))
     pubkey = db.Column(db.String(128))
 
+
 @app.route('/login', methods=['POST'])
-def login():
+def verf_login():
+    values = request.get_json()
+
+    # Check that the required fields are in the POST'ed data
+    required = ['username', 'password', 'ipAddress']
+    if values is None:
+        return 'Values is None', 400
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+
     data = request.form
     user = User.query.filter_by(username=data['username']).first()
     if user:
-        if check_password_hash(user.password, data['password']):
-            login_user(user, remember=data['remember'])
-
+        if user.password == data['password']:
             # update database
             user.status = True
             user.ipAddress = data['ipAddress']
@@ -60,6 +66,7 @@ def login():
 
 @app.route('/signup', methods=['POST'])
 def signup():
+    data = request.form
     new_user = User(username=data['username'],
                     email=data['number'], password=data['password'],
                     status=False, pubkey=data['pubkey'])
@@ -67,6 +74,7 @@ def signup():
     db.session.commit()
 
     return True
+
 
 @app.route('/get_rec_pub', methods=['POST'])
 def get_rec_pub():
@@ -76,6 +84,7 @@ def get_rec_pub():
     if recipient:
         rec_pubkey = recipient.pubkey
     return rec_pubkey
+
 
 @app.route('/send_msg', methods=['POST'])
 def send_msg():
@@ -93,10 +102,18 @@ def send_msg():
         return True
     return False
 
+
 @app.route('/logout')
 def logout():
-    logout_user()
-    return True
+    data = request.form
+    user = User.query.filter_by(username=data['username']).first()
+    if user:
+        # update database
+        user.status = False
+        db.session.commit()
+        return True
+    return False
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5010, debug=True)
