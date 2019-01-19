@@ -1,18 +1,22 @@
 import os
 
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect, url_for, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from multiprocessing import Queue
 import requests
-from genkey import *
+import json
+
+import hashlib
+from login.genkey import *
+from Similar import *
 
 from difflib import SequenceMatcher
 
 from multiprocessing import Queue
 import requests
-from genkey import *
 
 Sen_ipAddress = 'localhost:5010'
 
@@ -29,6 +33,9 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+name = ''
+threshold = 0.9
 
 
 def sendJSON(ipAddress, path, JSON):
@@ -61,7 +68,7 @@ def loading_msg():
     }
     full_list = {}
     # try:
-    current_user = db.session.query(chatdata.id, chatdata.target).order_by(chatdata.id.desc()).first().target
+    current_target = db.session.query(chatdata.id, chatdata.target).order_by(chatdata.id.desc()).first().target
     items = db.session.query(chatdata.target, chatdata.sender, chatdata.msg, chatdata.time).all()
     for item in items:
         data['sender'] = item.sender
@@ -72,7 +79,7 @@ def loading_msg():
         else:
             full_list[item.target] = [data.copy()]
 
-    return jsonify({'msgList': full_list, 'currentUser': current_user}), 200
+    return jsonify({'msgList': full_list, 'currentUser': current_target}), 200
     # except:
     #     data = {
     #         'message': 'Unable to read from localChat.db'
@@ -80,7 +87,6 @@ def loading_msg():
     #     return jsonify(data), 201
 
 
-# TODO adding sending message to /send_msg
 @app.route('/msg/send', methods=['POST'])
 def sending_msg():
     values = request.get_json()
@@ -101,6 +107,66 @@ def sending_msg():
     db.session.add(new_entry)
     db.session.commit()
 
+    # getting the recipient public key
+    URL = 'http://localhost:5010/get_rec_pub'
+    data = {
+        'recipient': values['target']
+    }
+
+    r = requests.post(URL, data=data)
+
+    if r.content:
+        rec_pub = r.content
+    else:
+        rec_pub = ''
+
+
+    # TODO adding sending message to /send_msg , why 'recipient': data['rec_pubkey'],???
+    global name
+    URL = 'http://localhost:5010/send_msg'
+    data = {
+        'sender': name,
+        'recipient': values['target'],
+        'rec_pubkey': rec_pub,
+        'message': values['msg']
+    }
+
+    # TODO adding checking similarity
+    if len(values['msg']) > 32:
+        global threshold
+        items = db.session.query(chatdata.target, chatdata.msg).all()
+        for item in items:
+            if simtext(values['msg'], item['msg']) > threshold:
+                # getting the myself public key
+                URL = 'http://localhost:5010/get_rec_pub'
+                data = {
+                    'recipient': name
+                }
+
+                r = requests.post(URL, data=data)
+
+                if r.content:
+                    self_pub = r.content
+                else:
+                    self_pub = ''
+
+                # submitting to blockchain
+
+                URL = 'http://localhost:5020/msg/new'
+                data = {
+                    'sender': self_pub,
+                    'recipient': rec_pub,
+                    # todo find original msg
+                    'original_msg': hashlib.sha256(block_string).hexdigest(),
+                    'modified_msg': hashlib.sha256(modified_msg).hexdigest(),
+                    'similarity':
+                }
+
+    data = {
+        'message': 'Chat record had been added to the database'
+    }
+    return jsonify(data), 200
+
 
 @app.route('/get_users', methods=['POST'])
 @login_required
@@ -113,7 +179,8 @@ def get_users():
         filter_users['status'] = user['status']
 
     return filter_users
-
+    
+# todo send into database
 @app.route('/inter_msg', methods=['POST'])
 def inter_msg():
     msg = decrypt_msg(request.form['msg'], prikey)
@@ -137,7 +204,9 @@ def get_msg():
 def login():
     global prikey, name
     if request.method == 'POST':
+        global name
         data = request.form
+        name = data['username']
         data['password'] = generate_password_hash(data['password'], method='sha256')
         data['ipAddress'] = request.remote_addr
 
@@ -175,13 +244,9 @@ def logout():
         prikey, pubkey = None, None
     return redirect(url_for('login'))
 
-# TODO adding checking similarity
-    data = {
-        'message': 'Chat record had been added to the database'
-    }
-    return jsonify(data), 200
 
 if __name__ == '__main__':
+    qMsg = Queue()
     # app.run(host='0.0.0.0', port='5000')
     qMsg = Queue()
     app.run(port='5002', debug=True)

@@ -79,23 +79,24 @@ def signup():
 @app.route('/get_rec_pub', methods=['POST'])
 def get_rec_pub():
     data = request.form
-    #get pubkey
+    # get pubkey
     recipient = User.query.filter_by(username=data['recipient']).first()
     if recipient:
         rec_pubkey = recipient.pubkey
-    return rec_pubkey
+        return rec_pubkey
+    else:
+        return 'pubkey not found'
 
 
 @app.route('/send_msg', methods=['POST'])
 def send_msg():
     data = request.form
-    #get ip address
+    # get ip address
     recipient = User.query.filter_by(username=data['recipient']).first()
     if recipient:
         rec_ipAddress = recipient.ipAddress
         JSON = {
-            'sender': data['name'],
-            'recipient': data['rec_pubkey'],
+            'sender': data['sender'],
             'msg': data['message']
         }
         sendJSON(rec_ipAddress, JSON)
