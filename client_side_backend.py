@@ -2,10 +2,16 @@ import os
 
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
+from multiprocessing import Queue
+import requests
+from genkey import *
 
 from difflib import SequenceMatcher
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 
 db_path = os.path.join(os.path.dirname(__file__), 'localChat.db')
 db_uri = 'sqlite:///{}'.format(db_path)
@@ -14,6 +20,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 app.config['SECRET_KEY'] = 'thisismysecret'
 
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 
 # define class for user database
@@ -52,20 +61,21 @@ def loading_msg():
     #     }
     #     return jsonify(data), 201
 
+
 # TODO adding sending message to /send_msg
 @app.route('/msg/send', methods=['POST'])
 def sending_msg():
     values = request.get_json()
 
     # Check that the required fields are in the POST'ed data
-    required = ['target', 'sender', 'msg', 'time']
+    required = ['recipient', 'msg', 'time']
 
     if not all(k in values for k in required):
         return 'Missing values', 400
 
     new_entry = {
-        'target': values['target'],
-        'sender': values['sender'],
+        'target': values['recipient'],
+        'sender': 'Me',
         'msg': values['msg'],
         'time': values['time'],
     }
