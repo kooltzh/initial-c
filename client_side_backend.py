@@ -102,11 +102,25 @@ def sending_msg():
     db.session.commit()
 
 
+@app.route('/get_users', methods=['POST'])
+@login_required
+def get_users():
+    users = User.query.filter_by(username != name)
+
+    filter_users = {}
+    for user in users:
+        filter_users['username'] = user['username']
+        filter_users['status'] = user['status']
+
+    return filter_users
+
 @app.route('/inter_msg', methods=['POST'])
 def inter_msg():
     msg = decrypt_msg(request.form['msg'], prikey)
     print(msg)
     qMsg.put(msg)
+    #TODO add submit to database
+    
     return render_template('index.html')
 
 
@@ -169,6 +183,7 @@ def logout():
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port='5000')
+    qMsg = Queue()
     app.run(port='5002', debug=True)
 
 
