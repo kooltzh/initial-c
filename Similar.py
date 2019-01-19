@@ -6,6 +6,7 @@ from difflib import SequenceMatcher
 
 def simtext(txt1, txt2):
     # compare text using difflib
+    # Return a measure of the sequences’ similarity as a float in the range [0, 1].
     similar = SequenceMatcher(None, txt1, txt2).ratio()
     return similar
 

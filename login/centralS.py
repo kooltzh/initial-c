@@ -79,11 +79,13 @@ def signup():
 @app.route('/get_rec_pub', methods=['POST'])
 def get_rec_pub():
     data = request.form
-    #get pubkey
+    # get pubkey
     recipient = User.query.filter_by(username=data['recipient']).first()
     if recipient:
         rec_pubkey = recipient.pubkey
-    return rec_pubkey
+        return rec_pubkey
+    else:
+        return 'pubkey not found'
 
 
 @app.route('/send_msg', methods=['POST'])
@@ -95,7 +97,6 @@ def send_msg():
         rec_ipAddress = recipient.ipAddress
         JSON = {
             'sender': data['sender'],
-            'recipient': data['rec_pubkey'],
             'msg': data['message']
         }
         sendJSON(rec_ipAddress, JSON)
