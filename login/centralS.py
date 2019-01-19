@@ -89,12 +89,12 @@ def get_rec_pub():
 @app.route('/send_msg', methods=['POST'])
 def send_msg():
     data = request.form
-    #get ip address
+    # get ip address
     recipient = User.query.filter_by(username=data['recipient']).first()
     if recipient:
         rec_ipAddress = recipient.ipAddress
         JSON = {
-            'sender': data['name'],
+            'sender': data['sender'],
             'recipient': data['rec_pubkey'],
             'msg': data['message']
         }

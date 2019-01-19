@@ -1,18 +1,19 @@
 import os
 
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect, url_for, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from multiprocessing import Queue
 import requests
-from genkey import *
+import JSON
+from login.genkey import *
 
 from difflib import SequenceMatcher
 
 from multiprocessing import Queue
 import requests
-from genkey import *
 
 Sen_ipAddress = 'localhost:5010'
 
@@ -61,7 +62,7 @@ def loading_msg():
     }
     full_list = {}
     # try:
-    current_user = db.session.query(chatdata.id, chatdata.target).order_by(chatdata.id.desc()).first().target
+    current_target = db.session.query(chatdata.id, chatdata.target).order_by(chatdata.id.desc()).first().target
     items = db.session.query(chatdata.target, chatdata.sender, chatdata.msg, chatdata.time).all()
     for item in items:
         data['sender'] = item.sender
@@ -72,7 +73,7 @@ def loading_msg():
         else:
             full_list[item.target] = [data.copy()]
 
-    return jsonify({'msgList': full_list, 'currentUser': current_user}), 200
+    return jsonify({'msgList': full_list, 'currentUser': current_target}), 200
     # except:
     #     data = {
     #         'message': 'Unable to read from localChat.db'
@@ -80,7 +81,6 @@ def loading_msg():
     #     return jsonify(data), 201
 
 
-# TODO adding sending message to /send_msg
 @app.route('/msg/send', methods=['POST'])
 def sending_msg():
     values = request.get_json()
@@ -100,6 +100,18 @@ def sending_msg():
 
     db.session.add(new_entry)
     db.session.commit()
+
+    # TODO adding sending message to /send_msg
+    URL = 'http://localhost:5010/send_msg'
+    data = {
+        '':
+    }
+
+    # TODO adding checking similarity
+    data = {
+        'message': 'Chat record had been added to the database'
+    }
+    return jsonify(data), 200
 
 
 @app.route('/inter_msg', methods=['POST'])
@@ -161,13 +173,9 @@ def logout():
         prikey, pubkey = None, None
     return redirect(url_for('login'))
 
-# TODO adding checking similarity
-    data = {
-        'message': 'Chat record had been added to the database'
-    }
-    return jsonify(data), 200
 
 if __name__ == '__main__':
+    qMsg = Queue()
     # app.run(host='0.0.0.0', port='5000')
     app.run(port='5002', debug=True)
 
