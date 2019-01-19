@@ -29,8 +29,6 @@ login_manager.login_view = 'login'
 def sendJSON(ipAddress, JSON):
     URL = 'http://' + ipAddress + ':5000/inter_msg'
     try:
-        print('ssssssssss')
-
         r = requests.post(url=URL, data=JSON)
     except Exception as e:
         print(e)

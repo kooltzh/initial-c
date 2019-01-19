@@ -5,6 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 from difflib import SequenceMatcher
 
+from multiprocessing import Queue
+import requests
+from genkey import *
+
+Sen_ipAddress = 'localhost:5010'
+
 app = Flask(__name__)
 
 db_path = os.path.join(os.path.dirname(__file__), 'localChat.db')
@@ -15,6 +21,18 @@ app.config['SECRET_KEY'] = 'thisismysecret'
 
 db = SQLAlchemy(app)
 
+
+def sendJSON(ipAddress, path, JSON):
+    r = False
+    URL = 'http://' + ipAddress + path
+    try:
+        r = requests.post(url=URL, data=JSON)
+    except Exception as e:
+        print(e)
+        print("failed to connect to {}".format(URL))
+    return r
+
+    
 
 # define class for user database
 class chatdata(db.Model):
@@ -73,6 +91,64 @@ def sending_msg():
     db.session.add(new_entry)
     db.session.commit()
 
+
+@app.route('/inter_msg', methods=['POST'])
+def inter_msg():
+    msg = decrypt_msg(request.form['msg'], prikey)
+    print(msg)
+    qMsg.put(msg)
+    return render_template('index.html')
+
+
+@app.route('/get_msg')
+@login_required
+def get_msg():
+    def gen():
+        while True:
+            yield 'data: {}\n\n'.format(qMsg.get())
+    return Response(gen(), mimetype='text/event-stream')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    global prikey, name
+    if request.method == 'POST':
+        data = request.form
+        data['password'] = generate_password_hash(data['password'], method='sha256')
+        data['ipAddress'] = request.remote_addr
+
+        if sendJSON(Sen_ipAddress, 'login', data):
+            login_user(data, remember=data['remember'])
+            return redirect(url_for('index'))
+
+        return '<h1>Invalid username or password</h1>'
+
+    return render_template('login.html')
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        data = request.form
+
+        data['password'] = generate_password_hash(
+            data['password'], method='sha256')
+        # get public key
+        _, pubkey = save_keys(data['username'])
+
+        if sendJSON(Sen_ipAddress, 'signup', data):
+            login_user(data, remember=data['remember'])
+            return '<h1>New user has been created!</h1>'
+        return '<h1>Invalid username or password</h1>'
+    return render_template('signup.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    if sendJSON(Sen_ipAddress, 'login', name):
+        logout_user()
+        prikey, pubkey = None, None
+    return redirect(url_for('login'))
 
 # TODO adding checking similarity
     data = {
