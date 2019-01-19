@@ -131,9 +131,7 @@ def send_msg():
         if recipient:
             rec_pubkey = recipient.pubkey
             rec_ipAddress = recipient.ipAddress
-            #rmb to remove
-            name = 'pakzan'
-
+            
             JSON = {
                 'sender': name,
                 'recipient': rec_pubkey,
@@ -147,12 +145,8 @@ def send_msg():
 # @login_required
 def inter_msg():
     form = MessageForm()
-    #rmb to remove
-    prikey, pubkey = load_keys('pakzan')
-    print(type(request.form['msg']))
     msg = decrypt_msg(request.form['msg'], prikey)
-
-    print(type(msg))
+    print(msg)
     qMsg.put(msg)
     return render_template('message.html', form=form)
 

@@ -22,16 +22,17 @@ def load_keys(filename):
 
 def save_keys(filename):
     prikey, pubkey = gen_keys()
-    # save private key
     try:
+        # save private key
         with open(filename + "pri.key", 'wb') as content_file:
             chmod(filename + "pri.key", 600)
             content_file.write(prikey.exportKey('PEM'))
-    except:
+        # save public key
+        with open(filename + "pub.key", 'wb') as content_file:
+            content_file.write(pubkey.exportKey('OpenSSH'))
+    except Exception as e:
+        print(e)
         print('open private file error')
-    # save public key
-    with open(filename + "pub.key", 'wb') as content_file:
-        content_file.write(pubkey.exportKey('OpenSSH'))
 
     return prikey, pubkey
 
@@ -51,9 +52,9 @@ def encrypt_msg(msg, pubkey):
     return encoded_encrypted_msg
 
 def decrypt_msg(encoded_encrypted_msg, prikey):
-	decoded_encrypted_msg = base64.b64decode(encoded_encrypted_msg)
-	decoded_decrypted_msg = prikey.decrypt(decoded_encrypted_msg)
-	return decoded_decrypted_msg.decode('ascii')
+    decoded_encrypted_msg = base64.b64decode(encoded_encrypted_msg)
+    decoded_decrypted_msg = prikey.decrypt(decoded_encrypted_msg)
+    return decoded_decrypted_msg.decode('ascii')
 
 ########## BEGIN ##########
 
@@ -64,11 +65,16 @@ if __name__ == '__main__':
 
     msg = "The quick brown fox jumped over the lazy dog"
     prikey, pubkey = gen_keys()
+    print(type(prikey))
+    prikey, pubkey = load_keys('')
+    print(type(prikey))
+
     encrypted_msg = encrypt_msg(msg, pubkey)
+
     decrypted_msg = decrypt_msg(encrypted_msg, prikey)
 
-    print ("%s - (%d)" % (prikey.exportKey(), len(prikey.exportKey())))
-    print ("%s - (%d)" % (pubkey.exportKey(), len(pubkey.exportKey())))
-    print ("Original content: %s - (%d)" % (msg, len(msg)))
-    print ("Encrypted msg: %s - (%d)" % (encrypted_msg, len(encrypted_msg)))
-    print("Decrypted msg: %s - (%d)" % (decrypted_msg, len(decrypted_msg)))
+    # print ("%s - (%d)" % (prikey.exportKey(), len(prikey.exportKey())))
+    # print ("%s - (%d)" % (pubkey.exportKey(), len(pubkey.exportKey())))
+    # print ("Original content: %s - (%d)" % (msg, len(msg)))
+    # print ("Encrypted msg: %s - (%d)" % (encrypted_msg, len(encrypted_msg)))
+    # print("Decrypted msg: %s - (%d)" % (decrypted_msg, len(decrypted_msg)))
