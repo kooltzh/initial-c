@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm 
@@ -7,9 +8,15 @@ from flask_sqlalchemy  import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+from genkey import *
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
-app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///C:\Users\tpz\Desktop\finish\database.db'
+
+db_path = os.path.join(os.path.dirname(__file__), 'database.db')
+db_uri = 'sqlite:///{}'.format(db_path)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -50,6 +57,9 @@ def login():
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
+
+                # get private and public key
+                prikey, pubkey = load_keys(form.username.data)
                 return redirect(url_for('dashboard'))
 
         return '<h1>Invalid username or password</h1>'
@@ -67,6 +77,9 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
+        # get private and public key
+        prikey, pubkey = save_keys(form.username.data)
+
         return '<h1>New user has been created!</h1>'
         #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
 
@@ -81,6 +94,7 @@ def dashboard():
 @login_required
 def logout():
     logout_user()
+    prikey, pubkey = None, None
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
