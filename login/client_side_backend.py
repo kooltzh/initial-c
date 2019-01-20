@@ -44,14 +44,14 @@ def simtext(txt1, txt2):
     return similar
 
 def sendJSON(ipAddress, path, JSON):
-    r = False
+    r = ''
     URL = 'http://' + ipAddress + '/' + path
     try:
         r = requests.post(url=URL, data=JSON)
     except Exception as e:
         print(e)
         print("failed to connect to {}".format(URL))
-    return r
+    return r == 'True'
 
     
 
@@ -239,17 +239,18 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        data = request.form
+        data = request.form.to_dict()
 
         data['password'] = generate_password_hash(
             data['password'], method='sha256')
         # get public key
         _, pubkey = save_keys(data['username'])
+        data['pubkey'] = pubkey
 
         if sendJSON(Sen_ipAddress, 'signup', data):
             login_user(data, remember=data['remember'])
-            return '<h1>New user has been created!</h1>'
-        return '<h1>Invalid username or password</h1>'
+        return redirect(url_for('login'))
+    # return '<h1>Invalid username or password</h1>'
     return render_template('signup.html')
 
 

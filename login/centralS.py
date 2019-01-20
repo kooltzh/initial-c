@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
     status = db.Column(db.Boolean)
-    ipAddress = db.Column(db.String(15))
+    ipAddress = db.Column(db.String(25))
     pubkey = db.Column(db.String(128))
 
 
@@ -87,7 +87,7 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
 
-    return True
+    return 'True'
 
 
 @app.route('/get_rec_pub', methods=['POST'])
@@ -125,8 +125,8 @@ def send_msg():
             'msg': data['message']
         }
         sendJSON(rec_ipAddress, JSON)
-        return True
-    return False
+        return 'True'
+    return 'False'
 
 
 @app.route('/logout')
@@ -137,8 +137,8 @@ def logout():
         # update database
         user.status = False
         db.session.commit()
-        return True
-    return False
+        return 'True'
+    return 'False'
 
 
 if __name__ == '__main__':

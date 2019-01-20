@@ -157,21 +157,34 @@ def trace_source():
         trans = chain['transactions']
         for tran in reversed(trans):
             if tran['modified_msg'] == search_str:
+                URL = 'http://localhost:5010/get_username'
                 if first:
                     first = False
+                    data = {
+                        'pubkey': tran['recipient']
+                    }
+                    r = requests(URL, data=data)
+                    user = r.content
                     user_msg = {
-                        'user': tran['recipient'],
+                        'user': user,
+                        'private_key': tran['recipient'],
                         'msg': tran['modified_msg']
                     }
                     list_user_msg.append(user_msg)
+                data = {
+                    'pubkey': tran['sender']
+                }
+                r = requests(URL, data=data)
+                user = r.content
                 user_msg = {
-                    'user': tran['sender'],
+                    'user': user,
+                    'private_key': tran['sender'],
                     'msg': tran['original_msg']
                 }
                 list_user_msg.append(user_msg)
                 search_str = tran['original_msg']
 
-    return render_template('trace.html', items = list_user_msg)
+    return render_template('trace.html', items=list_user_msg)
 
 
 @app.route('/', methods=['GET'])

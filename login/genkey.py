@@ -25,7 +25,7 @@ def save_keys(filename):
     try:
         # save private key
         with open(filename + "pri.key", 'wb') as content_file:
-            chmod(filename + "pri.key", 600)
+            # chmod(filename + "pri.key", 755)
             content_file.write(prikey.exportKey('PEM'))
         # save public key
         with open(filename + "pub.key", 'wb') as content_file:
