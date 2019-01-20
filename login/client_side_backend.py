@@ -19,6 +19,8 @@ from difflib import SequenceMatcher
 from multiprocessing import Queue
 import requests
 
+threshold = 0.9
+
 Sen_ipAddress = 'localhost:5010'
 
 app = Flask(__name__)
@@ -34,6 +36,12 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+def simtext(txt1, txt2):
+    # compare text using difflib
+    # Return a measure of the sequences’ similarity as a float in the range [0, 1].
+    similar = SequenceMatcher(None, txt1, txt2).ratio()
+    return similar
 
 def sendJSON(ipAddress, path, JSON):
     r = False
@@ -86,21 +94,14 @@ def loading_msg():
 
 @app.route('/msg/send', methods=['POST'])
 def sending_msg():
+    global name
+
     values = request.get_json()
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'target', 'msg', 'time']
 
     if not all(k in values for k in required):
         return 'Missing values', 400
-
-    new_entry = chatdata(
-        target=values['target'],
-        sender='Me',
-        msg=values['msg'],
-        time=values['time']
-    )
-    db.session.add(new_entry)
-    db.session.commit()
 
     # getting the recipient public key
     URL = 'http://localhost:5010/get_rec_pub'
@@ -115,22 +116,13 @@ def sending_msg():
     else:
         rec_pub = ''
 
-    # TODO adding sending message to /send_msg
-    global name
-    URL = 'http://localhost:5010/send_msg'
-    data = {
-        'sender': name,
-        'recipient': values['target'],
-        'rec_pubkey': rec_pub,
-        'message': values['msg']
-    }
 
     # TODO adding checking similarity
     if len(values['msg']) > 32:
         global threshold
         items = db.session.query(chatdata.id, chatdata.target, chatdata.msg).order_by(chatdata.id.desc()).all()
         for item in items:
-            similarity = simtext(values['msg'], item['msg'])
+            similarity = simtext(values['msg'], item.msg)
             if similarity > threshold:
                 # getting the myself public key
                 URL = 'http://localhost:5010/get_rec_pub'
@@ -149,12 +141,35 @@ def sending_msg():
 
                 URL = 'http://localhost:5020/msg/new'
                 data = {
-                    'sender': self_pub,
-                    'recipient': rec_pub,
-                    'original_msg': hashlib.sha256(chatdata.msg).hexdigest(),
-                    'modified_msg': hashlib.sha256(values['msg']).hexdigest(),
+                    'sender': self_pub.decode('utf-8'),
+                    'recipient': rec_pub.decode('utf-8'),
+                    'original_msg': hashlib.sha256(item.msg.encode('utf-8')).hexdigest(),
+                    'modified_msg': hashlib.sha256(values['msg'].encode('utf-8')).hexdigest(),
                     'similarity': similarity
                 }
+
+                r = requests.post(URL, json=data)
+
+    new_entry = chatdata(
+        target=values['target'],
+        sender='Me',
+        msg=values['msg'],
+        time=values['time']
+    )
+    db.session.add(new_entry)
+    db.session.commit()
+
+
+
+    # TODO adding sending message to /send_msg
+    URL = 'http://localhost:5010/send_msg'
+    data = {
+        'sender': name,
+        'recipient': values['target'],
+        'rec_pubkey': rec_pub,
+        'message': values['msg']
+    }
+
 
     data = {
         'message': 'Chat record had been added to the database'
@@ -174,6 +189,12 @@ def get_users():
 
     if r.content:
         return r.content
+
+@app.route('/msg/send', methods=['POST'])
+def index():
+    return 'welcome to client side backend'
+
+
     
 # todo send into database
 @app.route('/inter_msg', methods=['POST'])
@@ -248,8 +269,4 @@ if __name__ == '__main__':
     app.run(port='5002', debug=True)
 
 
-def simtext(txt1, txt2):
-    # compare text using difflib
-    # Return a measure of the sequences’ similarity as a float in the range [0, 1].
-    similar = SequenceMatcher(None, txt1, txt2).ratio()
-    return similar
+

@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 
 import requests
 
+
 class Blockchain:
     def __init__(self):
         self.current_transactions = []
@@ -180,9 +181,6 @@ class Blockchain:
         """
         Validates the Proof
 
-        :param last_proof: <int> Previous Proof
-        :param proof: <int> Current Proof
-        :param last_hash: <str> The hash of the Previous Block
         :return: <bool> True if correct, False if not.
 
         """
