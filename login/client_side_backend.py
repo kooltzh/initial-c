@@ -35,12 +35,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-from flask_cors import CORS
-CORS(app)
-name = ''
-threshold = 0.9
-
-
 def sendJSON(ipAddress, path, JSON):
     r = False
     URL = 'http://' + ipAddress + '/' + path
@@ -109,60 +103,60 @@ def sending_msg():
     db.session.add(new_entry)
     db.session.commit()
 
-    # getting the recipient public key
-    URL = 'http://localhost:5010/get_rec_pub'
-    data = {
-        'recipient': values['target']
-    }
-
-    r = requests.post(URL, data=data)
-
-    if r.content:
-        rec_pub = r.content
-    else:
-        rec_pub = ''
-
-
-    # TODO adding sending message to /send_msg , why 'recipient': data['rec_pubkey'],???
-    global name
-    URL = 'http://localhost:5010/send_msg'
-    data = {
-        'sender': name,
-        'recipient': values['target'],
-        'rec_pubkey': rec_pub,
-        'message': values['msg']
-    }
+    # # getting the recipient public key
+    # URL = 'http://localhost:5010/get_rec_pub'
+    # data = {
+    #     'recipient': values['target']
+    # }
     #
-    # # TODO adding checking similarity
-    # if len(values['msg']) > 32:
-    #     global threshold
-    #     items = db.session.query(chatdata.target, chatdata.msg).all()
-    #     for item in items:
-    #         if simtext(values['msg'], item['msg']) > threshold:
-    #             # getting the myself public key
-    #             URL = 'http://localhost:5010/get_rec_pub'
-    #             data = {
-    #                 'recipient': name
-    #             }
+    # r = requests.post(URL, data=data)
     #
-    #             r = requests.post(URL, data=data)
+    # if r.content:
+    #     rec_pub = r.content
+    # else:
+    #     rec_pub = ''
     #
-    #             if r.content:
-    #                 self_pub = r.content
-    #             else:
-    #                 self_pub = ''
-
-                # submitting to blockchain
-                #
-                # URL = 'http://localhost:5020/msg/new'
-                # data = {
-                #     'sender': self_pub,
-                #     'recipient': rec_pub,
-                #     # todo find original msg
-                #     'original_msg': hashlib.sha256(block_string).hexdigest(),
-                #     'modified_msg': hashlib.sha256(modified_msg).hexdigest(),
-                #     'similarity':
-                # }
+    #
+    # # TODO adding sending message to /send_msg , why 'recipient': data['rec_pubkey'],???
+    # global name
+    # URL = 'http://localhost:5010/send_msg'
+    # data = {
+    #     'sender': name,
+    #     'recipient': values['target'],
+    #     'rec_pubkey': rec_pub,
+    #     'message': values['msg']
+    # }
+    # #
+    # # # TODO adding checking similarity
+    # # if len(values['msg']) > 32:
+    # #     global threshold
+    # #     items = db.session.query(chatdata.target, chatdata.msg).all()
+    # #     for item in items:
+    # #         if simtext(values['msg'], item['msg']) > threshold:
+    # #             # getting the myself public key
+    # #             URL = 'http://localhost:5010/get_rec_pub'
+    # #             data = {
+    # #                 'recipient': name
+    # #             }
+    # #
+    # #             r = requests.post(URL, data=data)
+    # #
+    # #             if r.content:
+    # #                 self_pub = r.content
+    # #             else:
+    # #                 self_pub = ''
+    #
+    #             # submitting to blockchain
+    #             #
+    #             # URL = 'http://localhost:5020/msg/new'
+    #             # data = {
+    #             #     'sender': self_pub,
+    #             #     'recipient': rec_pub,
+    #             #     # todo find original msg
+    #             #     'original_msg': hashlib.sha256(block_string).hexdigest(),
+    #             #     'modified_msg': hashlib.sha256(modified_msg).hexdigest(),
+    #             #     'similarity':
+    #             # }
 
     data = {
         'message': 'Chat record had been added to the database'
