@@ -11,6 +11,7 @@ import json
 from genkey import *
 
 import hashlib
+from genkey import *
 # from Similar import *
 
 from difflib import SequenceMatcher
@@ -96,7 +97,6 @@ def sending_msg():
     global name
 
     values = request.get_json()
-    values = json.loads(values)
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'target', 'msg', 'time']
 
