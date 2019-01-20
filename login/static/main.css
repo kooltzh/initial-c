@@ -104,6 +104,7 @@ body {
   list-style: none;
   font-size: 13px;
   height: 88%;
+  overflow: auto;
 }
 .ui .list-friends img {
   margin: 5px;
@@ -202,6 +203,13 @@ body {
   max-width: 500px;
   word-wrap: break-word;
   position: relative;
+}
+.ui .messages li .message a{
+  text-decoration: none;
+  cursor: pointer;
+}
+.ui .messages li .message a:hover{
+  color: grey
 }
 .ui .messages li .message:before {
   content: '';
