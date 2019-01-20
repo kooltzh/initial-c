@@ -49,10 +49,10 @@ def sendJSON(ipAddress, path, JSON):
 # define class for user database
 class chatdata(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    target = db.Column(db.String(15))
-    sender = db.Column(db.String(15))
-    msg = db.Column(db.String(300))
-    time = db.Column(db.String(50))
+    target = db.Column(db.String(150))
+    sender = db.Column(db.String(150))
+    msg = db.Column(db.String(3000))
+    time = db.Column(db.String(500))
 
 
 @app.route('/msg/load')
@@ -88,7 +88,7 @@ def sending_msg():
     values = request.get_json()
     values = json.loads(values)
     # Check that the required fields are in the POST'ed data
-    required = ['target', 'sender', 'msg', 'time']
+    required = ['sender', 'target', 'msg', 'time']
 
     if not all(k in values for k in required):
         return 'Missing values', 400
@@ -203,6 +203,7 @@ def login():
         name = data['username']
         data['password'] = generate_password_hash(data['password'], method='sha256')
         data['ipAddress'] = request.remote_addr
+        print(data)
         print(sendJSON(Sen_ipAddress, 'login', data))
 
         if True:

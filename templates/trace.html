@@ -1,8 +1,51 @@
 <body>
+	<style>
+		@keyframes myfirst {
+			0%   {margin-top: -5%;opacity: 0;}
+			100%  {margin-top: 2%;opacity: 1;}
+		}
+		body {
+			background-image: linear-gradient(141deg, #DCEDC8 0%, #B2FF59 75%);
+		}
+		dir {
+			font-family: Arial;
+			margin: auto;
+			margin-top: 2%;
+
+			background-color: #D4E157;
+
+			border: 2px solid #1B5E20;
+			border-radius: 25px;
+			width: 200px;
+			padding: 25px;
+			animation: myfirst 1s ease-out 0s;
+		}
+
+		h1{
+			margin: 2%;
+		}
+		p{
+			margin-left: 2%;
+		}
+	</style>
+
 	{% for item in items %}
-    <dir>
-      <h1> User: {{ item.user }}</h1>
-      <p> Message: {{ item.msg }}</p>
-    </dir>
-  {% endfor %}
+	<dir>
+		<h1><span style="color: #214a11; font-weight:bold">User: </span><span style="color: #212121">{{ item.user }}</span></h1>
+		<p> <span style="color: #214a11; font-weight:bold">Message: </span><span style="color: #212121">{{ item.msg }}</span></p>
+	</dir>
+	{% endfor %}
 </body>
+
+<!-- <dir>
+	<h1>  <span style="color: #214a11; font-weight:bold">User: </span><span style="color: #212121">abcv</span></h1>
+	<p> <span style="color: #214a11; font-weight:bold">Message: </span><span style="color: #212121">ssss</span></p>
+</dir>
+<dir>
+	<h1> User: abcv</h1>
+	<p> Message: ssss</p>
+</dir>
+<dir>
+	<h1> User: abcv</h1>
+	<p> Message: ssss</p>
+</dir> -->
