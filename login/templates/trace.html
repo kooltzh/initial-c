@@ -32,6 +32,7 @@
 	{% for item in items %}
 	<dir>
 		<h1><span style="color: #214a11; font-weight:bold">User: </span><span style="color: #212121">{{ item.user }}</span></h1>
+		<h2><span style="color: #214a11; font-weight:bold">User: </span><span style="color: #212121">{{ item.private_key }}</span></h2>
 		<p> <span style="color: #214a11; font-weight:bold">Message: </span><span style="color: #212121">{{ item.msg }}</span></p>
 	</dir>
 	{% endfor %}
