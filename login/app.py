@@ -69,6 +69,18 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/get_users', methods=['POST'])
+@login_required
+def get_users():
+    users = User.query.filter_by(username != name)
+    
+    filter_users = {}
+    for user in users:
+        filter_users['username'] = user['username']
+        filter_users['status'] = user['status']
+        
+    return filter_users
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global prikey, name
