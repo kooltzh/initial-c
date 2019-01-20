@@ -4,7 +4,7 @@ import json
 URL = "http://localhost:5002/msg/send"
 
 data = {
-    'target': 'User D',
+    'target': 'admin2',
     'sender': 'Me',
     'msg': 'Hello good morning',
     'time': 'Today morning',
