@@ -11,7 +11,6 @@ import json
 from genkey import *
 
 import hashlib
-from login.genkey import *
 # from Similar import *
 
 from difflib import SequenceMatcher
@@ -103,60 +102,59 @@ def sending_msg():
     db.session.add(new_entry)
     db.session.commit()
 
-    # # getting the recipient public key
-    # URL = 'http://localhost:5010/get_rec_pub'
-    # data = {
-    #     'recipient': values['target']
-    # }
-    #
-    # r = requests.post(URL, data=data)
-    #
-    # if r.content:
-    #     rec_pub = r.content
-    # else:
-    #     rec_pub = ''
-    #
-    #
-    # # TODO adding sending message to /send_msg , why 'recipient': data['rec_pubkey'],???
-    # global name
-    # URL = 'http://localhost:5010/send_msg'
-    # data = {
-    #     'sender': name,
-    #     'recipient': values['target'],
-    #     'rec_pubkey': rec_pub,
-    #     'message': values['msg']
-    # }
-    # #
-    # # # TODO adding checking similarity
-    # # if len(values['msg']) > 32:
-    # #     global threshold
-    # #     items = db.session.query(chatdata.target, chatdata.msg).all()
-    # #     for item in items:
-    # #         if simtext(values['msg'], item['msg']) > threshold:
-    # #             # getting the myself public key
-    # #             URL = 'http://localhost:5010/get_rec_pub'
-    # #             data = {
-    # #                 'recipient': name
-    # #             }
-    # #
-    # #             r = requests.post(URL, data=data)
-    # #
-    # #             if r.content:
-    # #                 self_pub = r.content
-    # #             else:
-    # #                 self_pub = ''
-    #
-    #             # submitting to blockchain
-    #             #
-    #             # URL = 'http://localhost:5020/msg/new'
-    #             # data = {
-    #             #     'sender': self_pub,
-    #             #     'recipient': rec_pub,
-    #             #     # todo find original msg
-    #             #     'original_msg': hashlib.sha256(block_string).hexdigest(),
-    #             #     'modified_msg': hashlib.sha256(modified_msg).hexdigest(),
-    #             #     'similarity':
-    #             # }
+    # getting the recipient public key
+    URL = 'http://localhost:5010/get_rec_pub'
+    data = {
+        'recipient': values['target']
+    }
+
+    r = requests.post(URL, data=data)
+
+    if r.content:
+        rec_pub = r.content
+    else:
+        rec_pub = ''
+
+    # TODO adding sending message to /send_msg
+    global name
+    URL = 'http://localhost:5010/send_msg'
+    data = {
+        'sender': name,
+        'recipient': values['target'],
+        'rec_pubkey': rec_pub,
+        'message': values['msg']
+    }
+
+    # TODO adding checking similarity
+    if len(values['msg']) > 32:
+        global threshold
+        items = db.session.query(chatdata.id, chatdata.target, chatdata.msg).order_by(chatdata.id.desc()).all()
+        for item in items:
+            similarity = simtext(values['msg'], item['msg'])
+            if similarity > threshold:
+                # getting the myself public key
+                URL = 'http://localhost:5010/get_rec_pub'
+                data = {
+                    'recipient': name
+                }
+
+                r = requests.post(URL, data=data)
+
+                if r.content:
+                    self_pub = r.content
+                else:
+                    self_pub = ''
+
+                # submitting to blockchain
+
+                URL = 'http://localhost:5020/msg/new'
+                data = {
+                    'sender': self_pub,
+                    'recipient': rec_pub,
+                    'original_msg': hashlib.sha256(chatdata.msg).hexdigest(),
+                    'modified_msg': hashlib.sha256(values['msg']).hexdigest(),
+                    'similarity': similarity
+                }
 
     data = {
         'message': 'Chat record had been added to the database'
@@ -164,17 +162,18 @@ def sending_msg():
     return jsonify(data), 200
 
 
-@app.route('/get_users', methods=['POST'])
-@login_required
+@app.route('/get_users')
 def get_users():
-    users = User.query.filter_by(username != name)
+    global name
+    URL = 'http://localhost:5010/get_users'
+    data = {
+        'name': name
+    }
 
-    filter_users = {}
-    for user in users:
-        filter_users['username'] = user['username']
-        filter_users['status'] = user['status']
+    r = requests.post(URL, data = data)
 
-    return filter_users
+    if r.content:
+        return r.content
     
 # todo send into database
 @app.route('/inter_msg', methods=['POST'])
@@ -248,3 +247,8 @@ if __name__ == '__main__':
     app.run(port='5002', debug=True)
 
 
+def simtext(txt1, txt2):
+    # compare text using difflib
+    # Return a measure of the sequences’ similarity as a float in the range [0, 1].
+    similar = SequenceMatcher(None, txt1, txt2).ratio()
+    return similar

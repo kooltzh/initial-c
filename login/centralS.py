@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, url_for, request, Response
+from flask import Flask, render_template, redirect, url_for, request, Response, jsonify
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy  import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 
 # database location
-db_path = os.path.join(os.path.dirname(__file__), 'database.db')
+db_path = os.path.join(os.path.dirname(__file__), 'admin_testing.db')
 db_uri = 'sqlite:///{}'.format(db_path)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 
@@ -63,6 +63,22 @@ def verf_login():
     return 'False'
 
 
+@app.route('/get_users', methods=['POST'])
+def get_users():
+    name = request.form.get('name')
+    users = User.query.filter(User.username != name).all()
+
+    filter_users = []
+    for user in users:
+        user_dict = {
+            'username': user.username,
+            'status': user.status
+        }
+        filter_users.append(user_dict)
+
+    return jsonify(filter_users), 200
+
+
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.form
@@ -84,7 +100,7 @@ def get_rec_pub():
         rec_pubkey = recipient.pubkey
         return rec_pubkey
     else:
-        return 'pubkey not found'
+        return None
 
 
 @app.route('/send_msg', methods=['POST'])
