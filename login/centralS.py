@@ -42,14 +42,13 @@ class User(UserMixin, db.Model):
 
 @app.route('/login', methods=['POST'])
 def verf_login():
-    values = request.get_json()
-
-    # Check that the required fields are in the POST'ed data
-    required = ['username', 'password', 'ipAddress']
-    if values is None:
-        return 'Values is None', 400
-    if not all(k in values for k in required):
-        return 'Missing values', 400
+    # values = request.form
+    # # Check that the required fields are in the POST'ed data
+    # required = ['username', 'password', 'ipAddress']
+    # if values is None:
+    #     return 'Values is None', 400
+    # if not all(k in values for k in required):
+    #     return 'Missing values', 400
 
     data = request.form
     user = User.query.filter_by(username=data['username']).first()

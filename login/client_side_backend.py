@@ -55,10 +55,10 @@ def sendJSON(ipAddress, path, JSON):
 # define class for user database
 class chatdata(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    target = db.Column(db.String(15))
-    sender = db.Column(db.String(15))
-    msg = db.Column(db.String(300))
-    time = db.Column(db.String(50))
+    target = db.Column(db.String(150))
+    sender = db.Column(db.String(150))
+    msg = db.Column(db.String(3000))
+    time = db.Column(db.String(500))
 
 
 @app.route('/msg/load')
@@ -92,78 +92,78 @@ def loading_msg():
 @app.route('/msg/send', methods=['POST'])
 def sending_msg():
     values = request.get_json()
-
+    print(values)
     # Check that the required fields are in the POST'ed data
-    required = ['target', 'sender', 'msg', 'time']
+    required = ['sender', 'target', 'msg', 'time']
 
     if not all(k in values for k in required):
         return 'Missing values', 400
 
-    new_entry = {
-        'target': values['target'],
-        'sender': 'Me',
-        'msg': values['msg'],
-        'time': values['time'],
-    }
+    new_entry = chatdata(
+        target=values['target'],
+        sender='Me',
+        msg=values['msg'],
+        time=values['time']
+    )
 
     db.session.add(new_entry)
     db.session.commit()
+    
+    # # getting the recipient public key
+    # URL = 'http://localhost:5010/get_rec_pub'
+    # data = {
+    #     'recipient': values['target']
+    # }
 
-    # getting the recipient public key
-    URL = 'http://localhost:5010/get_rec_pub'
-    data = {
-        'recipient': values['target']
-    }
+    # r = requests.post(URL, data=data)
 
-    r = requests.post(URL, data=data)
-
-    if r.content:
-        rec_pub = r.content
-    else:
-        rec_pub = ''
+    # if r.content:
+    #     rec_pub = r.content
+    # else:
+    #     rec_pub = ''
 
 
-    # TODO adding sending message to /send_msg , why 'recipient': data['rec_pubkey'],???
-    global name
-    URL = 'http://localhost:5010/send_msg'
-    data = {
-        'sender': name,
-        'recipient': values['target'],
-        'rec_pubkey': rec_pub,
-        'message': values['msg']
-    }
+    # # TODO adding sending message to /send_msg , why 'recipient': data['rec_pubkey'],???
+    # global name
+    # URL = 'http://localhost:5010/send_msg'
+    # data = {
+    #     'sender': name,
+    #     'recipient': values['target'],
+    #     'rec_pubkey': rec_pub,
+    #     'message': values['msg']
+    # }
 
-    # TODO adding checking similarity
-    if len(values['msg']) > 32:
-        global threshold
-        items = db.session.query(chatdata.target, chatdata.msg).all()
-        for item in items:
-            if simtext(values['msg'], item['msg']) > threshold:
-                # getting the myself public key
-                URL = 'http://localhost:5010/get_rec_pub'
-                data = {
-                    'recipient': name
-                }
+    # # TODO adding checking similarity
+    # if len(values['msg']) > 32:
+    #     global threshold
+    #     items = db.session.query(chatdata.target, chatdata.msg).all()
+    #     for item in items:
+    #         if simtext(values['msg'], item['msg']) > threshold:
+    #             # getting the myself public key
+    #             URL = 'http://localhost:5010/get_rec_pub'
+    #             data = {
+    #                 'recipient': name
+    #             }
 
-                r = requests.post(URL, data=data)
+    #             r = requests.post(URL, data=data)
 
-                if r.content:
-                    self_pub = r.content
-                else:
-                    self_pub = ''
+    #             if r.content:
+    #                 self_pub = r.content
+    #             else:
+    #                 self_pub = ''
 
-                # submitting to blockchain
+    #             # submitting to blockchain
 
-                URL = 'http://localhost:5020/msg/new'
-                data = {
-                    'sender': self_pub,
-                    'recipient': rec_pub,
-                    # todo find original msg
-                    'original_msg': hashlib.sha256(block_string).hexdigest(),
-                    'modified_msg': hashlib.sha256(modified_msg).hexdigest(),
-                    'similarity':
-                }
-
+    #             URL = 'http://localhost:5020/msg/new'
+    #             data = {
+    #                 'sender': self_pub,
+    #                 'recipient': rec_pub,
+    #                 # todo find original msg
+    #                 'original_msg': hashlib.sha256(block_string).hexdigest(),
+    #                 'modified_msg': hashlib.sha256(modified_msg).hexdigest(),
+    #                 'similarity': 1
+    #             }
+                
     data = {
         'message': 'Chat record had been added to the database'
     }
@@ -210,6 +210,7 @@ def login():
         name = data['username']
         data['password'] = generate_password_hash(data['password'], method='sha256')
         data['ipAddress'] = request.remote_addr
+        print(data)
         print(sendJSON(Sen_ipAddress, 'login', data))
 
         if True:
