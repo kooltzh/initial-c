@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from multiprocessing import Queue
 import requests
 import json
+from genkey import *
 
 import hashlib
 from login.genkey import *
@@ -34,13 +35,15 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+from flask_cors import CORS
+CORS(app)
 name = ''
 threshold = 0.9
 
 
 def sendJSON(ipAddress, path, JSON):
     r = False
-    URL = 'http://' + ipAddress + path
+    URL = 'http://' + ipAddress + '/' + path
     try:
         r = requests.post(url=URL, data=JSON)
     except Exception as e:
@@ -51,7 +54,7 @@ def sendJSON(ipAddress, path, JSON):
     
 
 # define class for user database
-class chatdata(db.Model):
+class chatdata(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     target = db.Column(db.String(15))
     sender = db.Column(db.String(15))
@@ -101,7 +104,7 @@ def sending_msg():
         target=values['target'],
         sender='Me',
         msg=values['msg'],
-        time=values['time'],
+        time=values['time']
     )
     db.session.add(new_entry)
     db.session.commit()
@@ -167,17 +170,31 @@ def sending_msg():
     return jsonify(data), 200
 
 
+@app.route('/get_users', methods=['POST'])
+@login_required
+def get_users():
+    users = User.query.filter_by(username != name)
+
+    filter_users = {}
+    for user in users:
+        filter_users['username'] = user['username']
+        filter_users['status'] = user['status']
+
+    return filter_users
+    
 # todo send into database
 @app.route('/inter_msg', methods=['POST'])
 def inter_msg():
     msg = decrypt_msg(request.form['msg'], prikey)
     print(msg)
     qMsg.put(msg)
+    #TODO add submit to database
+    
     return render_template('index.html')
 
 
 @app.route('/get_msg')
-@login_required
+# @login_required
 def get_msg():
     def gen():
         while True:
@@ -189,15 +206,15 @@ def get_msg():
 def login():
     global prikey, name
     if request.method == 'POST':
-        global name
-        data = request.form
+        data = request.form.to_dict()
         name = data['username']
         data['password'] = generate_password_hash(data['password'], method='sha256')
         data['ipAddress'] = request.remote_addr
+        print(sendJSON(Sen_ipAddress, 'login', data))
 
-        if sendJSON(Sen_ipAddress, 'login', data):
-            login_user(data, remember=data['remember'])
-            return redirect(url_for('index'))
+        if True:
+            # login_user(data, remember=data['remember'])
+            return render_template('index.html')
 
         return '<h1>Invalid username or password</h1>'
 
@@ -222,7 +239,7 @@ def signup():
 
 
 @app.route('/logout')
-@login_required
+# @login_required
 def logout():
     if sendJSON(Sen_ipAddress, 'login', name):
         logout_user()
@@ -233,6 +250,7 @@ def logout():
 if __name__ == '__main__':
     qMsg = Queue()
     # app.run(host='0.0.0.0', port='5000')
+    qMsg = Queue()
     app.run(port='5002', debug=True)
 
 
