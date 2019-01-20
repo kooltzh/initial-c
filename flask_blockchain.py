@@ -137,12 +137,13 @@ def consensus():
     return jsonify(response), 200
 
 
-@app.route('/msg/trace', methods=['POST'])
+@app.route('/msg/trace', methods=['POST', 'GET'])
 def trace_source():
     values = request.get_json()
-
+    if not values:
+        values = request.args
     # Check that the required fields are in the POST'ed data
-    required = ['sender', 'recipient', 'msg']
+    required = ['msg']
     if not all(k in values for k in required):
         return 'Missing values', 400
 
@@ -187,4 +188,4 @@ if __name__ == '__main__':
     port = args.port
 
     # app.run(host='0.0.0.0', port=port)
-    app.run(port=port, debug=True)
+    app.run(port=5020, debug=True)

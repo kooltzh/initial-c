@@ -11,7 +11,7 @@ import json
 
 import hashlib
 from login.genkey import *
-from Similar import *
+# from Similar import *
 
 from difflib import SequenceMatcher
 
@@ -90,20 +90,19 @@ def loading_msg():
 @app.route('/msg/send', methods=['POST'])
 def sending_msg():
     values = request.get_json()
-
+    values = json.loads(values)
     # Check that the required fields are in the POST'ed data
     required = ['target', 'sender', 'msg', 'time']
 
     if not all(k in values for k in required):
         return 'Missing values', 400
 
-    new_entry = {
-        'target': values['target'],
-        'sender': 'Me',
-        'msg': values['msg'],
-        'time': values['time'],
-    }
-
+    new_entry = chatdata(
+        target=values['target'],
+        sender='Me',
+        msg=values['msg'],
+        time=values['time'],
+    )
     db.session.add(new_entry)
     db.session.commit()
 
@@ -130,37 +129,37 @@ def sending_msg():
         'rec_pubkey': rec_pub,
         'message': values['msg']
     }
-
-    # TODO adding checking similarity
-    if len(values['msg']) > 32:
-        global threshold
-        items = db.session.query(chatdata.target, chatdata.msg).all()
-        for item in items:
-            if simtext(values['msg'], item['msg']) > threshold:
-                # getting the myself public key
-                URL = 'http://localhost:5010/get_rec_pub'
-                data = {
-                    'recipient': name
-                }
-
-                r = requests.post(URL, data=data)
-
-                if r.content:
-                    self_pub = r.content
-                else:
-                    self_pub = ''
+    #
+    # # TODO adding checking similarity
+    # if len(values['msg']) > 32:
+    #     global threshold
+    #     items = db.session.query(chatdata.target, chatdata.msg).all()
+    #     for item in items:
+    #         if simtext(values['msg'], item['msg']) > threshold:
+    #             # getting the myself public key
+    #             URL = 'http://localhost:5010/get_rec_pub'
+    #             data = {
+    #                 'recipient': name
+    #             }
+    #
+    #             r = requests.post(URL, data=data)
+    #
+    #             if r.content:
+    #                 self_pub = r.content
+    #             else:
+    #                 self_pub = ''
 
                 # submitting to blockchain
-
-                URL = 'http://localhost:5020/msg/new'
-                data = {
-                    'sender': self_pub,
-                    'recipient': rec_pub,
-                    # todo find original msg
-                    'original_msg': hashlib.sha256(block_string).hexdigest(),
-                    'modified_msg': hashlib.sha256(modified_msg).hexdigest(),
-                    'similarity':
-                }
+                #
+                # URL = 'http://localhost:5020/msg/new'
+                # data = {
+                #     'sender': self_pub,
+                #     'recipient': rec_pub,
+                #     # todo find original msg
+                #     'original_msg': hashlib.sha256(block_string).hexdigest(),
+                #     'modified_msg': hashlib.sha256(modified_msg).hexdigest(),
+                #     'similarity':
+                # }
 
     data = {
         'message': 'Chat record had been added to the database'
