@@ -102,15 +102,15 @@ def get_rec_pub():
         return None
 
 @app.route('/get_username', methods=['POST'])
-    def get_username():
-        data = request.form
-        # get pubkey
-        recipient = User.query.filter_by(pubkey=data['pubkey']).first()
-        if recipient:
-            rec_username = recipient.username
-            return username
-        else:
-            return None
+def get_username():
+    data = request.form
+    # get pubkey
+    recipient = User.query.filter_by(pubkey=data['pubkey']).first()
+    if recipient:
+        username = recipient.username
+        return username
+    else:
+        return None
 
 
 @app.route('/send_msg', methods=['POST'])
