@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c74b7872-9ff2-4fbd-8efc-672e474c4aa0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin3pri.key" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin3pub.key" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/flask_blockchain.py" beforeDir="false" afterPath="$PROJECT_DIR$/flask_blockchain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/localChat.db" beforeDir="false" afterPath="$PROJECT_DIR$/localChat.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/trace.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/trace.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/update_chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/update_chat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin2pri.key" beforeDir="false" afterPath="$PROJECT_DIR$/admin2pri.key" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin2pub.key" beforeDir="false" afterPath="$PROJECT_DIR$/admin2pub.key" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client_side_backend.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="253" column="4" selection-start-line="253" selection-start-column="4" selection-end-line="253" selection-end-column="4" />
+            <state relative-caret-position="842">
+              <caret line="246" column="29" selection-start-line="246" selection-start-column="20" selection-end-line="246" selection-end-column="29" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -36,8 +31,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/genkey.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="34" column="40" lean-forward="true" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
+            <state relative-caret-position="103">
+              <caret line="36" column="25" selection-start-line="36" selection-start-column="19" selection-end-line="36" selection-end-column="25" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
               </folding>
@@ -48,8 +43,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/centralS.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="197">
-              <caret line="102" lean-forward="true" selection-start-line="101" selection-start-column="19" selection-end-line="102" />
+            <state relative-caret-position="257">
+              <caret line="85" column="49" lean-forward="true" selection-start-line="85" selection-start-column="49" selection-end-line="85" selection-end-column="49" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -60,8 +55,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/update_chat.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="16" lean-forward="true" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
+            <state relative-caret-position="120">
+              <caret line="8" column="15" lean-forward="true" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -69,10 +64,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/flask_blockchain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="81">
+            <state relative-caret-position="420">
               <caret line="189" column="32" lean-forward="true" selection-start-line="189" selection-start-column="32" selection-end-line="189" selection-end-column="32" />
             </state>
           </provider>
@@ -93,8 +88,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/update_blockchain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" column="1" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
+            <state relative-caret-position="97">
+              <caret line="28" column="85" selection-start-line="28" selection-start-column="21" selection-end-line="28" selection-end-column="85" />
             </state>
           </provider>
         </entry>
@@ -134,10 +129,11 @@
         <option value="$PROJECT_DIR$/native_blockchain.py" />
         <option value="$PROJECT_DIR$/flask_blockchain.py" />
         <option value="$PROJECT_DIR$/templates/trace.html" />
-        <option value="$PROJECT_DIR$/update_chat.py" />
         <option value="$PROJECT_DIR$/genkey.py" />
         <option value="$PROJECT_DIR$/centralS.py" />
         <option value="$PROJECT_DIR$/client_side_backend.py" />
+        <option value="$PROJECT_DIR$/update_chat.py" />
+        <option value="$PROJECT_DIR$/update_blockchain.py" />
       </list>
     </option>
   </component>
@@ -188,7 +184,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.central server">
+  <component name="RunManager" selected="Python.blockchain server">
     <configuration name="blockchain server" type="PythonConfigurationType" factoryName="Python">
       <module name="initial-c" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -387,8 +383,8 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" sideWeight="0.50446427" side_tool="true" weight="0.15298013" />
-      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.4955357" visible="true" weight="0.15298013" />
-      <window_info id="Structure" order="2" sideWeight="0.50446427" side_tool="true" visible="true" weight="0.15298013" />
+      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49597856" visible="true" weight="0.15298013" />
+      <window_info id="Structure" order="2" sideWeight="0.50402147" side_tool="true" visible="true" weight="0.15298013" />
       <window_info anchor="bottom" id="Terminal" order="0" />
       <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.50066227" side_tool="true" weight="0.3994638" />
       <window_info anchor="bottom" id="Python Console" order="2" weight="0.3297587" />
@@ -396,7 +392,7 @@
       <window_info anchor="bottom" id="Find" order="4" weight="0.3297587" />
       <window_info anchor="bottom" id="Version Control" order="5" />
       <window_info anchor="bottom" id="Run" order="6" weight="0.3297587" />
-      <window_info active="true" anchor="bottom" id="Debug" order="7" sideWeight="0.49933776" visible="true" weight="0.3994638" />
+      <window_info anchor="bottom" id="Debug" order="7" sideWeight="0.49933776" weight="0.3994638" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="10" />
@@ -480,10 +476,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/update_blockchain.py">
+    <entry file="file://$PROJECT_DIR$/templates/trace.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="1" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
+        <state relative-caret-position="156">
+          <caret line="34" column="120" selection-start-line="34" selection-start-column="120" selection-end-line="34" selection-end-column="120" />
+          <folding>
+            <element signature="n#style#0;n#span#0;n#h1#1;n#dir#0;n#body#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#h1#1;n#dir#0;n#body#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
@@ -497,68 +504,57 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/trace.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="34" column="120" selection-start-line="34" selection-start-column="120" selection-end-line="34" selection-end-column="120" />
-          <folding>
-            <element signature="n#style#0;n#span#0;n#h1#1;n#dir#0;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#1;n#h1#1;n#dir#0;n#body#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/update_chat.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="16" lean-forward="true" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
+        <state relative-caret-position="120">
+          <caret line="8" column="15" lean-forward="true" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+    <entry file="file://$PROJECT_DIR$/centralS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flask_blockchain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="189" column="32" lean-forward="true" selection-start-line="189" selection-start-column="32" selection-end-line="189" selection-end-column="32" />
+        <state relative-caret-position="257">
+          <caret line="85" column="49" lean-forward="true" selection-start-line="85" selection-start-column="49" selection-end-line="85" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/genkey.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="34" column="40" lean-forward="true" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
+        <state relative-caret-position="103">
+          <caret line="36" column="25" selection-start-line="36" selection-start-column="19" selection-end-line="36" selection-end-column="25" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/centralS.py">
+    <entry file="file://$PROJECT_DIR$/update_blockchain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="102" lean-forward="true" selection-start-line="101" selection-start-column="19" selection-end-line="102" />
+        <state relative-caret-position="97">
+          <caret line="28" column="85" selection-start-line="28" selection-start-column="21" selection-end-line="28" selection-end-column="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client_side_backend.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="842">
+          <caret line="246" column="29" selection-start-line="246" selection-start-column="20" selection-end-line="246" selection-end-column="29" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client_side_backend.py">
+    <entry file="file://$PROJECT_DIR$/flask_blockchain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="253" column="4" selection-start-line="253" selection-start-column="4" selection-end-line="253" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="420">
+          <caret line="189" column="32" lean-forward="true" selection-start-line="189" selection-start-column="32" selection-end-line="189" selection-end-column="32" />
         </state>
       </provider>
     </entry>
