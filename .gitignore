@@ -4,3 +4,4 @@
 *.sublime*
 *.pyc
 admin_testing.db
+__pycache__
